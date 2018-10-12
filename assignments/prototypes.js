@@ -7,13 +7,23 @@
   
   Each constructor function has unique properites and methods that are defined in their block comments below:
 */
-  
+
 /*
   === GameObject ===
   * createdAt
   * dimensions
   * destroy() // prototype method -> returns the string: 'Object was removed from the game.'
 */
+
+class GameObject {
+    constructor({ createdAt, dimensions }) {
+        Object.assign(this, { createdAt, dimensions });
+    }
+
+    destroy() {
+        return `${this.name} was removed from the game.`;
+    }
+}
 
 /*
   === CharacterStats ===
@@ -22,6 +32,21 @@
   * takeDamage() // prototype method -> returns the string '<object name> took damage.'
   * should inherit destroy() from GameObject's prototype
 */
+
+class CharacterStats extends GameObject {
+    constructor({ hp, name, createdAt, dimensions }) {
+        super({ createdAt, dimensions });
+        Object.assign(this, { hp, name });
+    }
+
+    takeDamage() {
+        return `${this.name} took damage.`;
+    }
+
+    destroy() {
+        return super.destroy();
+    }
+}
 
 /*
   === Humanoid ===
@@ -32,7 +57,48 @@
   * should inherit destroy() from GameObject through CharacterStats
   * should inherit takeDamage() from CharacterStats
 */
- 
+
+class Humanoid extends CharacterStats {
+    constructor({
+        faction,
+        weapons,
+        language,
+        hp,
+        name,
+        createdAt,
+        dimensions
+    }) {
+        super({ hp, name, createdAt, dimensions });
+        Object.assign(this, { faction, weapons, language });
+    }
+
+    greet() {
+        return `${this.name} offers a greeting in ${this.language}.`;
+    }
+
+    destroy() {
+        return super.destroy();
+    }
+
+    takeDamage() {
+        return super.takeDamage();
+    }
+}
+
+const test = new Humanoid({
+    createdAt: new Date(),
+    dimensions: {
+        length: 2,
+        width: 1,
+        height: 1
+    },
+    hp: 5,
+    name: 'Bruce',
+    faction: 'Mage Guild',
+    weapons: ['Staff of Shamalama'],
+    language: 'Common Toungue'
+});
+
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
   * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
@@ -41,70 +107,60 @@
 
 // Test you work by uncommenting these 3 objects and the list of console logs below:
 
-/*
-  const mage = new Humanoid({
+const mage = new Humanoid({
     createdAt: new Date(),
     dimensions: {
-      length: 2,
-      width: 1,
-      height: 1,
+        length: 2,
+        width: 1,
+        height: 1
     },
     hp: 5,
     name: 'Bruce',
     faction: 'Mage Guild',
-    weapons: [
-      'Staff of Shamalama',
-    ],
-    language: 'Common Toungue',
-  });
+    weapons: ['Staff of Shamalama'],
+    language: 'Common Toungue'
+});
 
-  const swordsman = new Humanoid({
+const swordsman = new Humanoid({
     createdAt: new Date(),
     dimensions: {
-      length: 2,
-      width: 2,
-      height: 2,
+        length: 2,
+        width: 2,
+        height: 2
     },
     hp: 15,
     name: 'Sir Mustachio',
     faction: 'The Round Table',
-    weapons: [
-      'Giant Sword',
-      'Shield',
-    ],
-    language: 'Common Toungue',
-  });
+    weapons: ['Giant Sword', 'Shield'],
+    language: 'Common Toungue'
+});
 
-  const archer = new Humanoid({
+const archer = new Humanoid({
     createdAt: new Date(),
     dimensions: {
-      length: 1,
-      width: 2,
-      height: 4,
+        length: 1,
+        width: 2,
+        height: 4
     },
     hp: 10,
     name: 'Lilith',
     faction: 'Forest Kingdom',
-    weapons: [
-      'Bow',
-      'Dagger',
-    ],
-    language: 'Elvish',
-  });
+    weapons: ['Bow', 'Dagger'],
+    language: 'Elvish'
+});
 
-  console.log(mage.createdAt); // Today's date
-  console.log(archer.dimensions); // { length: 1, width: 2, height: 4 }
-  console.log(swordsman.hp); // 15
-  console.log(mage.name); // Bruce
-  console.log(swordsman.faction); // The Round Table
-  console.log(mage.weapons); // Staff of Shamalama
-  console.log(archer.language); // Elvish
-  console.log(archer.greet()); // Lilith offers a greeting in Elvish.
-  console.log(mage.takeDamage()); // Bruce took damage.
-  console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
-*/
+console.log(mage.createdAt); // Today's date
+console.log(archer.dimensions); // { length: 1, width: 2, height: 4 }
+console.log(swordsman.hp); // 15
+console.log(mage.name); // Bruce
+console.log(swordsman.faction); // The Round Table
+console.log(mage.weapons); // Staff of Shamalama
+console.log(archer.language); // Elvish
+console.log(archer.greet()); // Lilith offers a greeting in Elvish.
+console.log(mage.takeDamage()); // Bruce took damage.
+console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
 
-  // Stretch task: 
-  // * Create Villian and Hero constructor functions that inherit from the Humanoid constructor function.  
-  // * Give the Hero and Villians different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
-  // * Create two new objects, one a villian and one a hero and fight it out with methods!
+// Stretch task:
+// * Create Villian and Hero constructor functions that inherit from the Humanoid constructor function.
+// * Give the Hero and Villians different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
+// * Create two new objects, one a villian and one a hero and fight it out with methods!
