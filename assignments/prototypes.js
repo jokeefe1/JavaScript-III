@@ -1,111 +1,81 @@
 /*
-  Object oriented design is commonly used in video games.  For this part of the assignment you will be implementing several constructor functions with their correct inheritance heirarchy.
+Object oriented design is commonly used in video games.  For this part of the assignment you will be implementing several constructor functions with their correct inheritance heirarchy.
 
-  In this file you will be creating three constructor functions: GameObject, CharacterStats, Humanoid.  
+In this file you will be creating three constructor functions: GameObject, CharacterStats, Humanoid.  
 
-  At the bottom of this file are 3 objects that all end up inheriting from Humanoid.  Use the objects at the bottom of the page to test your constructor functions.
-  
-  Each constructor function has unique properites and methods that are defined in their block comments below:
+At the bottom of this file are 3 objects that all end up inheriting from Humanoid.  Use the objects at the bottom of the page to test your constructor functions.
+
+Each constructor function has unique properites and methods that are defined in their block comments below:
 */
 
 /*
-  === GameObject ===
-  * createdAt
-  * dimensions
-  * destroy() // prototype method -> returns the string: 'Object was removed from the game.'
+=== GameObject ===
+* createdAt
+* dimensions
+* destroy() // prototype method -> returns the string: 'Object was removed from the game.'
 */
 
-class GameObject {
-    constructor({ createdAt, dimensions }) {
-        Object.assign(this, { createdAt, dimensions });
-    }
-
-    destroy() {
-        return `${this.name} was removed from the game.`;
-    }
-}
-
 /*
-  === CharacterStats ===
-  * hp
-  * name
-  * takeDamage() // prototype method -> returns the string '<object name> took damage.'
-  * should inherit destroy() from GameObject's prototype
+=== CharacterStats ===
+* hp
+* name
+* takeDamage() // prototype method -> returns the string '<object name> took damage.'
+* should inherit destroy() from GameObject's prototype
 */
 
-class CharacterStats extends GameObject {
-    constructor({ hp, name, createdAt, dimensions }) {
-        super({ createdAt, dimensions });
-        Object.assign(this, { hp, name });
-    }
-
-    takeDamage() {
-        return `${this.name} took damage.`;
-    }
-
-    destroy() {
-        return super.destroy();
-    }
-}
-
 /*
-  === Humanoid ===
-  * faction
-  * weapons
-  * language
-  * greet() // prototype method -> returns the string '<object name> offers a greeting in <object language>.'
-  * should inherit destroy() from GameObject through CharacterStats
-  * should inherit takeDamage() from CharacterStats
+=== Humanoid ===
+* faction
+* weapons
+* language
+* greet() // prototype method -> returns the string '<object name> offers a greeting in <object language>.'
+* should inherit destroy() from GameObject through CharacterStats
+* should inherit takeDamage() from CharacterStats
 */
 
-class Humanoid extends CharacterStats {
-    constructor({
-        faction,
-        weapons,
-        language,
-        hp,
-        name,
-        createdAt,
-        dimensions
-    }) {
-        super({ hp, name, createdAt, dimensions });
-        Object.assign(this, { faction, weapons, language });
-    }
-
-    greet() {
-        return `${this.name} offers a greeting in ${this.language}.`;
-    }
-
-    destroy() {
-        return super.destroy();
-    }
-
-    takeDamage() {
-        return super.takeDamage();
-    }
-}
-
-const test = new Humanoid({
-    createdAt: new Date(),
-    dimensions: {
-        length: 2,
-        width: 1,
-        height: 1
-    },
-    hp: 5,
-    name: 'Bruce',
-    faction: 'Mage Guild',
-    weapons: ['Staff of Shamalama'],
-    language: 'Common Toungue'
-});
-
 /*
-  * Inheritance chain: GameObject -> CharacterStats -> Humanoid
-  * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
-  * Instances of CharacterStats should have all of the same properties as GameObject.
+* Inheritance chain: GameObject -> CharacterStats -> Humanoid
+* Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
+* Instances of CharacterStats should have all of the same properties as GameObject.
 */
 
 // Test you work by uncommenting these 3 objects and the list of console logs below:
+
+function GameObject(gameObjectOptions) {
+    this.createdAt = gameObjectOptions.createdAt
+    this.dimensions = gameObjectOptions.dimensions
+}
+
+GameObject.prototype.destroy = function() {
+    return `${this.name} has been removed from the game.`
+}
+
+function CharacterStats(characterStatsOptions) {
+    GameObject.call(this, characterStatsOptions)
+    this.hp = characterStatsOptions.hp
+    this.name = characterStatsOptions.name
+}
+
+CharacterStats.prototype = Object.create(GameObject.prototype)
+
+CharacterStats.prototype.takeDamage = function() {
+    return `${this.name} took damage.`
+}
+
+
+function Humanoid(humanoidOptions) {
+    CharacterStats.call(this, humanoidOptions)
+    this.faction = humanoidOptions.faction
+    this.weapons = humanoidOptions.weapons
+    this.language = humanoidOptions.language
+}
+
+Humanoid.prototype = Object.create(CharacterStats.prototype)
+
+Humanoid.prototype.greet = function() {
+    return `${this.name} offers a greeting in ${this.language}.`
+}
+
 
 const mage = new Humanoid({
     createdAt: new Date(),
@@ -165,76 +135,61 @@ console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
 // * Give the Hero and Villians different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
 // * Create two new objects, one a villian and one a hero and fight it out with methods!
 
-class Villian extends Humanoid {
-    constructor({
-        faction,
-        weapons,
-        language,
-        hp,
-        name,
-        createdAt,
-        dimensions
-    }) {
-        super({ faction, weapons, language, hp, name, createdAt, dimensions });
-    }
 
-    attack(name) {
-        if (name.hp > 0) {
-            const damage = Math.floor(Math.random() * 3);
-            return (name.hp = name.hp - damage);
-        }
-
-        return `${name.name} has been killed. Muaha ha ha!!!`;
-    }
+function Villian(villianOptions) {
+    Humanoid.call(this, villianOptions)
 }
 
-class Hero extends Humanoid {
-    constructor({
-        faction,
-        weapons,
-        language,
-        hp,
-        name,
-        createdAt,
-        dimensions
-    }) {
-        super({ faction, weapons, language, hp, name, createdAt, dimensions });
+Villian.prototype = Object.create(Humanoid.prototype)
+
+Villian.prototype.attack = function(name) {
+    if (name.hp > 0) {
+        const damage = Math.floor(Math.random() * 4);
+        return (name.hp = name.hp - damage);
     }
 
-    attack(name) {
-        if (name.hp > 0) {
-            const damage = Math.floor(Math.random() * 4);
-            return (name.hp = name.hp - damage);
-        }
-
-        return `${name.name} has been eliminated. He fought gallently.`;
-    }
+    return `${name.name} has been eliminated. He fought gallently.`;
 }
 
-const combatant1 = new Villian({
+function Hero(heroOptions) {
+    Humanoid.call(this, heroOptions)
+}
+
+Hero.prototype = Object.create(Humanoid.prototype)
+
+Hero.prototype.attack = function(name) {
+    if (name.hp > 0) {
+        const damage = Math.floor(Math.random() * 4);
+        return (name.hp = name.hp - damage);
+    }
+
+    return `${name.name} has been eliminated.`;
+}
+
+const valdawort = new Villian({
     createdAt: new Date(),
     dimensions: {
         length: 2,
-        width: 2,
-        height: 2
+        width: 1,
+        height: 1
     },
-    hp: 15,
-    name: 'Sir Mustachio',
-    faction: 'The Round Table',
-    weapons: ['Giant Sword', 'Shield'],
+    hp: 5,
+    name: 'Valdawort',
+    faction: 'Mage Guild',
+    weapons: ['Staff of Shamalama'],
     language: 'Common Toungue'
 });
 
-const combatant2 = new Hero({
+const harryBlotter = new Hero({
     createdAt: new Date(),
     dimensions: {
-        length: 1,
-        width: 2,
-        height: 4
+        length: 2,
+        width: 1,
+        height: 1
     },
-    hp: 10,
-    name: 'Lilith',
-    faction: 'Forest Kingdom',
-    weapons: ['Bow', 'Dagger'],
-    language: 'Elvish'
+    hp: 5,
+    name: 'Very Harry Blotter',
+    faction: 'Mage Guild',
+    weapons: ['Staff of Shamalama'],
+    language: 'Common Toungue'
 });
