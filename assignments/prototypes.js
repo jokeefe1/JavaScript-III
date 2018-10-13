@@ -164,3 +164,77 @@ console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
 // * Create Villian and Hero constructor functions that inherit from the Humanoid constructor function.
 // * Give the Hero and Villians different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
 // * Create two new objects, one a villian and one a hero and fight it out with methods!
+
+class Villian extends Humanoid {
+    constructor({
+        faction,
+        weapons,
+        language,
+        hp,
+        name,
+        createdAt,
+        dimensions
+    }) {
+        super({ faction, weapons, language, hp, name, createdAt, dimensions });
+    }
+
+    attack(name) {
+        if (name.hp > 0) {
+            const damage = Math.floor(Math.random() * 3);
+            return (name.hp = name.hp - damage);
+        }
+
+        return `${name.name} has been killed. Muaha ha ha!!!`;
+    }
+}
+
+class Hero extends Humanoid {
+    constructor({
+        faction,
+        weapons,
+        language,
+        hp,
+        name,
+        createdAt,
+        dimensions
+    }) {
+        super({ faction, weapons, language, hp, name, createdAt, dimensions });
+    }
+
+    attack(name) {
+        if (name.hp > 0) {
+            const damage = Math.floor(Math.random() * 4);
+            return (name.hp = name.hp - damage);
+        }
+
+        return `${name.name} has been eliminated. He fought gallently.`;
+    }
+}
+
+const combatant1 = new Villian({
+    createdAt: new Date(),
+    dimensions: {
+        length: 2,
+        width: 2,
+        height: 2
+    },
+    hp: 15,
+    name: 'Sir Mustachio',
+    faction: 'The Round Table',
+    weapons: ['Giant Sword', 'Shield'],
+    language: 'Common Toungue'
+});
+
+const combatant2 = new Hero({
+    createdAt: new Date(),
+    dimensions: {
+        length: 1,
+        width: 2,
+        height: 4
+    },
+    hp: 10,
+    name: 'Lilith',
+    faction: 'Forest Kingdom',
+    weapons: ['Bow', 'Dagger'],
+    language: 'Elvish'
+});
